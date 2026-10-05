@@ -1,0 +1,38 @@
+title: "05 · Technical docs — error codes, settings, code samples and versions"
+summary: Markdown docs where users search identifiers (E1042, QUASAR_TIMEOUT_MS) and how-to questions
+collection: devdocs
+steps:
+  - name: Ingest five documentation pages
+    ingest: data/quasar-docs.json
+
+  - name: An error code finds its own section, not just the page
+    search: {query: E1042}
+    expect: {first: quasar-errors, first_text_contains: E1042, first_metadata: {section: {contains: E1042}}}
+
+  - name: An environment variable finds the configuration reference
+    search: {query: QUASAR_TIMEOUT_MS}
+    expect: {first: quasar-config, first_text_contains: QUASAR_TIMEOUT_MS}
+
+  - name: A how-to question finds the guide
+    search: {query: "my upload was interrupted halfway, how do I continue it?"}
+    expect: {includes: [quasar-uploads], within: 2}
+
+  - name: Code blocks are never split across chunks
+    search: {query: python example upload a file with client.upload, top_k: 5}
+    expect: {balanced: "```", any_text_contains: "client = qs.connect("}
+
+  - name: Neighbouring sections come along for the LLM (context expansion)
+    search: {query: resumable uploads}
+    expect: {has_context: true}
+
+  - name: The changelog answers "what changed" questions — filter by kind
+    search: {query: timeout setting renamed, filter: {kind: changelog}}
+    expect: {first: quasar-changelog, first_text_contains: timeout_ms}
+
+  - name: "Measure: identifiers and how-to questions (12 queries)"
+    evaluate: eval.json
+    expect: {variant: hybrid, ndcg_min: 0.7}
+
+  - name: The assistant quotes settings exactly
+    chat: {question: "What is the default request timeout and how do I change it?"}
+    expect: {citations_min: 1}

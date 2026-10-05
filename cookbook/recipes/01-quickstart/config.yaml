@@ -1,0 +1,13 @@
+# Recipe 01 · Quickstart — the smallest useful collection definition.
+# Everything not written here comes from config/rag.yaml `defaults` (hybrid retrieval, RRF fusion…) and
+# from the stack layer (which embedding models, which vector store).
+collections:
+  notes:
+    description: Team notes and how-tos
+    payload_indexes:
+      - {field: team}                     # index the fields you filter on
+    pipeline:
+      chunking:
+        strategy: markdown                # one chunk per heading section → edits re-embed only that section
+        chunk_size: 200
+        chunk_overlap: 20

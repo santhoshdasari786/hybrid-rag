@@ -1,0 +1,33 @@
+title: "01 · Quickstart — ingest, search, chat, update, delete"
+summary: The whole lifecycle on four notes with default settings
+collection: notes
+steps:
+  - name: Ingest four notes (sync)
+    ingest: data/notes.json
+
+  - name: Search finds the right note
+    search: {query: how do I deploy to production, top_k: 3}
+    expect: {first: note-deploy-checklist}
+
+  - name: A metadata filter narrows the search to one team
+    search: {query: runbook, filter: {team: platform}}
+    expect: {every: {team: platform}, count: {min: 2}}
+
+  - name: Chat answers with citations
+    chat: {question: "What should I check before deploying to production?"}
+    expect: {citations_min: 1}
+
+  - name: Re-sending a changed note re-embeds only what changed
+    upsert: {source_id: note-deploy-checklist, file: data/deploy-checklist-v2.json}
+    expect: {action: updated, chunks_unchanged_min: 1}
+
+  - name: Re-sending the same content is a no-op
+    upsert: {source_id: note-deploy-checklist, file: data/deploy-checklist-v2.json}
+    expect: {action: unchanged}
+
+  - name: Delete a note
+    delete: [note-coffee]
+
+  - name: The deleted note is gone from results
+    search: {query: espresso machine error E4}
+    expect: {excludes: [note-coffee]}

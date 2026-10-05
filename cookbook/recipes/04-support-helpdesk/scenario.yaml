@@ -1,0 +1,75 @@
+title: "04 · Support helpdesk — Q&A chunks, chunk metadata, conversations and a safe fallback"
+summary: Pre-chunked FAQ with per-chunk metadata, a guide, chat, OpenAI-compatible endpoint, off-topic gate
+collection: helpdesk
+steps:
+  - name: Ingest the help centre (two pre-chunked FAQs + one guide)
+    ingest: data/help-centre.json
+    expect: {chunks_min: 10}
+
+  # --- Q&A pairs are chunks with their own metadata ---------------------------------------------
+  - name: A customer's wording finds the right Q&A pair
+    search: {query: I was charged twice}
+    expect: {first_metadata: {intent: duplicate-charge}}
+
+  - name: Document metadata (area) and chunk metadata (intent) filter together
+    search: {query: how do I get my money back, filter: {area: billing}}
+    expect: {every: {area: billing}, first_metadata: {intent: refund}}
+
+  - name: The guide is split into sentences-sized chunks under its headings
+    search: {query: router light is red}
+    expect: {first: guide-troubleshooting, first_text_contains: red}
+
+  # --- curating answers without re-ingesting ------------------------------------------------------
+  - name: Retire an outdated answer by tagging its chunk
+    patch_chunk: {source_id: faq-billing, chunk_index: 4, metadata: {deprecated: true}}
+
+  - name: Searches that exclude deprecated chunks no longer return it
+    search:
+      query: why is my first bill higher than usual
+      filter: {must_not: [{field: deprecated, op: eq, value: true}]}
+    expect: {every: {intent: {ne: pro-rata}}}   # with the cross-encoder gate the result may be empty — better than a wrong answer
+
+  # --- answering -----------------------------------------------------------------------------------
+  - name: Chat answers with citations
+    chat: {question: "How do I pay by direct debit, and does it save money?"}
+    expect: {citations_min: 1}
+
+  - name: Chat widgets can use the OpenAI-compatible endpoint (model "rag:helpdesk")
+    openai_chat:
+      messages: [{role: user, content: "When is my bill issued?"}]
+
+  - name: "Off-topic question → fallback answer (cross-encoder gate: rerank.min_score 0)"
+    when: {stacks: [models, qdrant, pgvector]}
+    chat: {question: "What's the best pizza in Naples?"}
+    expect: {finish_reason: no_context}
+
+  - name: "Off-topic question → fallback answer (offline: dense-only with a calibrated threshold)"
+    when: {stacks: [offline]}
+    chat:
+      question: "What's the best pizza in Naples?"
+      retrieval: {mode: dense, dense_score_threshold: 0.25}
+    expect: {finish_reason: no_context}
+
+  - name: The same offline gate still lets real questions through
+    when: {stacks: [offline]}
+    chat:
+      question: My router light is red, what should I do?
+      retrieval: {mode: dense, dense_score_threshold: 0.25}
+    expect: {citations_min: 1}
+
+  # --- needs an LLM that writes (run with --llm anthropic | openai | gemini | claude-lite) -------
+  - name: A follow-up question is rewritten from the conversation before searching
+    when: {llm: generative}
+    chat:
+      messages:
+        - {role: user, content: "I'm moving house next month."}
+        - {role: assistant, content: "Thanks for letting us know. How can I help with the move?"}
+        - {role: user, content: "Can I take it with me?"}
+    expect: {citations_min: 1, cited_every: {area: account}}
+
+  - name: Multi-query expansion widens recall for vague questions
+    when: {llm: generative}
+    search:
+      query: internet keeps dropping
+      retrieval: {query_transform: {strategy: multi_query, num_queries: 3}}
+    expect: {includes: [guide-troubleshooting]}

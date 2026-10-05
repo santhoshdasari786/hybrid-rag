@@ -1,0 +1,57 @@
+title: "06 · Long documents — choosing a chunker, small-to-big context, contextual retrieval"
+summary: One plain-text handbook indexed three ways; measures whether answers survive chunking
+collection: handbook_recursive
+steps:
+  - name: "Index the handbook with fixed windows (baseline)"
+    collection: handbook_fixed
+    ingest: data/handbook.json
+  - name: "Index it with recursive splitting (paragraph → sentence, 20-token overlap)"
+    ingest: data/handbook.json
+    expect: {chunks_min: 5}
+  - name: "Index it with semantic splitting (topic shifts between sentences)"
+    collection: handbook_semantic
+    ingest: data/handbook.json
+
+  # --- is the answer inside the chunk we return? ---------------------------------------------------
+  - name: "Fixed windows: answer inside the top chunk"
+    collection: handbook_fixed
+    facts: facts.json
+  - name: "Recursive: answer inside the top chunk"
+    facts: facts.json
+    expect: {found_min: 10}
+  - name: "Semantic: answer inside the top chunk"
+    collection: handbook_semantic
+    facts: facts.json
+  - name: "Recursive + neighbouring chunks (what the LLM reads with context expansion)"
+    facts: {file: facts.json, use_context: true}
+    expect: {found_min: 12}
+
+  # --- answering ---------------------------------------------------------------------------------
+  - name: Every hit carries its neighbours
+    search: {query: parental leave for the secondary carer}
+    expect: {has_context: true, any_text_contains: 6 weeks}
+
+  - name: Chat over the handbook
+    chat: {question: "How much parental leave does the secondary carer get, and can it be split?"}
+    expect: {citations_min: 1}
+
+  # --- needs an LLM that writes: Anthropic-style contextual retrieval -----------------------------
+  - name: "Create a collection with LLM contextual retrieval (an LLM situates every chunk before embedding)"
+    when: {llm: generative}
+    create_collection:
+      name: handbook_contextual
+      description: Recursive chunks + an LLM-written context sentence per chunk
+      pipeline:
+        chunking: {strategy: recursive, chunk_size: 100, chunk_overlap: 20}
+        enrichment: {llm_context: {enabled: true, max_concurrency: 2}}
+  - name: Ingest into the contextual collection
+    when: {llm: generative}
+    collection: handbook_contextual
+    ingest: data/handbook.json
+  - name: "Contextual retrieval: answer inside the top chunk"
+    when: {llm: generative}
+    collection: handbook_contextual
+    facts: facts.json
+  - name: Clean up the contextual collection
+    when: {llm: generative}
+    drop_collection: handbook_contextual

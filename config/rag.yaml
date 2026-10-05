@@ -1,0 +1,109 @@
+# =============================================================================
+# Advanced RAG Service — base configuration (offline-capable defaults)
+#
+# Layer profiles on top:  RAG_CONFIG_FILE=config/rag.yaml,config/profiles/qdrant-hybrid.yaml
+# Override any key with env vars:  RAG__DEFAULTS__RETRIEVAL__TOP_K=8
+# Reference ${ENV_VAR} or ${ENV_VAR:-default} anywhere in YAML.
+# Full reference: doc/02-configuration.md
+# =============================================================================
+
+app:
+  name: advanced-rag-service
+  environment: ${RAG_ENVIRONMENT:-local}
+  api_prefix: /api/v1
+  docs_enabled: true
+  openai_compat_enabled: true
+  warmup_models: true
+
+server:
+  host: 0.0.0.0
+  port: ${PORT:-8080}
+  workers: 1
+  graceful_shutdown_s: 30
+
+logging:
+  level: ${LOG_LEVEL:-INFO}
+  format: ${LOG_FORMAT:-console}      # json in deployed environments
+  access_log: true
+
+observability:
+  metrics_enabled: true
+  metrics_path: /metrics
+  tracing_enabled: false
+
+security:
+  auth_enabled: false                 # enable + configure api_keys outside local development
+  cors_allow_origins: []
+  max_request_body_mb: 50
+  rate_limit:
+    enabled: false
+    requests_per_minute: 600
+    burst: 100
+
+# In-process store: zero dependencies, data lost on restart. Use a profile for Qdrant / pgvector.
+vector_store:
+  provider: memory
+
+registry:
+  url: sqlite+aiosqlite:///./data/rag_registry.db
+  auto_create_schema: true
+  store_content: true
+
+# "extractive" answers from retrieved text without a model. Use the production profile for Claude.
+llm:
+  provider: extractive
+  model: extractive
+
+ingestion:
+  default_mode: async
+  sync_max_documents: 20
+  max_documents_per_request: 100
+  worker_concurrency: 4
+  embed_concurrency: 2
+
+# ----------------------------------------------------------------------------- default pipeline
+defaults:
+  chunking:
+    strategy: recursive               # fixed | recursive | sentence | markdown | semantic
+    chunk_size: 384
+    chunk_overlap: 48
+    length_unit: tokens
+    tokenizer: approx
+  enrichment:
+    contextual_header:
+      enabled: true                   # prepend title/section to the embedded text
+  embedding:
+    dense:
+      provider: hash                  # offline; switch to fastembed/openai for semantic quality
+      model: hash-384
+    sparse:
+      provider: lexical               # offline BM25; switch to fastembed SPLADE for learned sparsity
+      model: lexical-bm25
+  retrieval:
+    mode: hybrid
+    top_k: 5
+    candidate_k: 50
+    fusion:
+      method: rrf
+      k: 60
+      weights: {dense: 1.0, sparse: 1.0}
+  generation:
+    max_context_tokens: 6000
+    condense_history: true
+
+# ----------------------------------------------------------------------------- collections
+# Declared collections are created at startup and managed by this file.
+collections:
+  default:
+    description: General-purpose knowledge base
+  products:
+    description: Product catalog (hybrid search tuned for SKUs and specs)
+    payload_indexes:
+      - {field: brand, type: keyword}
+      - {field: category, type: keyword}
+      - {field: cfm, type: integer}
+    pipeline:
+      chunking: {strategy: markdown, chunk_size: 256, chunk_overlap: 32}
+      retrieval:
+        top_k: 8
+        fusion: {weights: {dense: 1.0, sparse: 1.2}}   # exact specs (80 CFM, model numbers) matter

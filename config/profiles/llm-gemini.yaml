@@ -1,0 +1,17 @@
+# Overlay: generate answers with Google Gemini (google-genai SDK, extra `gemini`).
+#
+#   make install          # all extras (or: uv sync --inexact --extra gemini — plain `uv sync --extra` removes the others)
+#   GEMINI_API_KEY=... RAG_CONFIG_FILE=config/rag.yaml,config/profiles/llm-gemini.yaml make run
+#
+# Vertex AI instead of the Developer API: set options.vertexai/project/location, drop api_key and
+# use Google application-default credentials.
+llm:
+  provider: gemini
+  model: gemini-3.8-flash
+  api_key: ${GEMINI_API_KEY}
+  max_tokens: 16000
+  # options:
+  #   thinking_level: low   # minimal | low | medium | high
+  #   vertexai: true
+  #   project: my-gcp-project
+  #   location: global

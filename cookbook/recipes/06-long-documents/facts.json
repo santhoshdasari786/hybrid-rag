@@ -1,0 +1,62 @@
+[
+ {
+  "query": "how many weeks of parental leave does the primary carer get",
+  "contains": "16 weeks"
+ },
+ {
+  "query": "secondary carer leave",
+  "contains": "6 weeks"
+ },
+ {
+  "query": "how many vacation days per year",
+  "contains": "28 days"
+ },
+ {
+  "query": "when do carried-over holidays expire",
+  "contains": "31 March"
+ },
+ {
+  "query": "what is the meal allowance on an international trip",
+  "contains": "70 EUR"
+ },
+ {
+  "query": "can I fly business class on long flights",
+  "contains": "premium economy"
+ },
+ {
+  "query": "deadline for submitting expense receipts",
+  "contains": "30 days"
+ },
+ {
+  "query": "from which day of sickness do I need a doctor's note",
+  "contains": "fourth day"
+ },
+ {
+  "query": "how much is the home office budget",
+  "contains": "600 EUR"
+ },
+ {
+  "query": "can I work from abroad",
+  "contains": "20 working days"
+ },
+ {
+  "query": "who do I tell when my laptop is stolen",
+  "contains": "security@halcyon.example"
+ },
+ {
+  "query": "how much does the company add to my pension",
+  "contains": "5%"
+ },
+ {
+  "query": "training budget per year",
+  "contains": "1,500 EUR"
+ },
+ {
+  "query": "notice period after probation",
+  "contains": "three months"
+ },
+ {
+  "query": "what are the core working hours",
+  "contains": "10:00 to 15:00"
+ }
+]

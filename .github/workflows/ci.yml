@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Lint & type-check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with: {enable-cache: true}
+      - run: uv sync --all-extras --group dev --frozen
+      - run: uv run ruff format --check src tests scripts
+      - run: uv run ruff check src tests scripts
+      - run: uv run mypy
+
+  test:
+    name: Tests (unit, API, store contract vs Qdrant + pgvector)
+    runs-on: ubuntu-latest
+    services:
+      qdrant:
+        image: qdrant/qdrant:latest
+        ports: ["6333:6333"]
+      postgres:
+        image: pgvector/pgvector:pg16
+        env: {POSTGRES_USER: rag, POSTGRES_PASSWORD: rag, POSTGRES_DB: rag}
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U rag" --health-interval 5s --health-timeout 3s --health-retries 20
+    env:
+      RAG_IT_QDRANT_URL: http://localhost:6333
+      RAG_IT_PG_DSN: postgresql://rag:rag@localhost:5432/rag
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with: {enable-cache: true}
+      - run: uv sync --all-extras --group dev --frozen
+      - name: Wait for Qdrant
+        run: for i in $(seq 1 30); do curl -sf localhost:6333/readyz && break; sleep 2; done
+      - run: uv run pytest --cov --cov-report=xml
+      - uses: actions/upload-artifact@v4
+        with: {name: coverage, path: coverage.xml}
+
+  docker:
+    name: Container image
+    runs-on: ubuntu-latest
+    needs: [quality, test]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          tags: advanced-rag-service:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

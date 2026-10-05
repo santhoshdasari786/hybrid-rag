@@ -1,0 +1,40 @@
+# Recipe 03 · A CMS hosting many sites: one shared collection, partitioned by `site`.
+# Lesson: cookbook/recipes/03-cms-multi-site/README.md
+collections:
+  cms:
+    description: Every published page of every site; each query is scoped by `site` (and usually `locale`)
+    payload_indexes:
+      - {field: site, tenant: true}      # Qdrant co-locates and optimises per-site search; thousands of sites, one collection
+      - {field: locale}
+      - {field: content_type}            # page | article | faq | doc
+      - {field: area}                    # the CMS's own section tree (not `section`: chunkers write the heading path there)
+      - {field: published_at, type: datetime}
+    pipeline:
+      chunking:
+        strategy: markdown               # HTML is converted to Markdown first; headings become chunk boundaries
+        chunk_size: 200
+        chunk_overlap: 30
+      enrichment:
+        contextual_header:
+          template: "{title}\n{section}\n\n{text}"   # page title + heading path travel with every chunk
+      retrieval:
+        mode: hybrid
+        top_k: 6
+        candidate_k: 80
+        group_by: source_id              # at most two chunks per page, so one long page cannot fill the results
+        group_size: 2
+        context_expansion:
+          enabled: true                  # hand the LLM the chunk plus its neighbours
+          window: 1
+      generation:
+        system_prompt: |
+          You are the help assistant of a single website. Answer ONLY from the provided context, which comes
+          from that website, and cite every fact with its [n] marker. If the context does not answer the
+          question, say so and suggest the site's contact page; never use knowledge about other websites.
+
+# Who may call what (enable with security.auth_enabled: true; keys as SHA-256 digests in production):
+# security:
+#   auth_enabled: true
+#   api_keys:
+#     - {name: cms-backend,  key_sha256: "${CMS_BACKEND_KEY_SHA256}", scopes: [ingest, query], collections: [cms]}
+#     - {name: cms-admin,    key_sha256: "${CMS_ADMIN_KEY_SHA256}",   scopes: [admin, ingest, query]}

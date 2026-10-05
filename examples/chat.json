@@ -1,0 +1,9 @@
+{
+  "messages": [
+    {
+      "role": "user",
+      "content": "Which quiet 80 CFM fan helps prevent mold in the shower?"
+    }
+  ],
+  "stream": false
+}

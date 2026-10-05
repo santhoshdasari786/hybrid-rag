@@ -1,0 +1,16 @@
+{
+  "k": 5,
+  "level": "source",
+  "include_cases": true,
+  "cases": [
+    {"query": "exact identifier or SKU query", "relevant": ["source-id-1"]},
+    {"query": "conceptual question phrased differently from the docs", "relevant": {"source-id-2": 2, "source-id-3": 1}},
+    {"query": "query restricted by metadata", "relevant": ["source-id-4"], "filter": {"category": "manuals"}}
+  ],
+  "variants": {
+    "dense": {"mode": "dense"},
+    "sparse": {"mode": "sparse"},
+    "hybrid": {"mode": "hybrid"},
+    "hybrid+rerank": {"mode": "hybrid", "rerank": {"enabled": true}}
+  }
+}

@@ -1,0 +1,10 @@
+# Stack layer: the cross-encoder re-ranker from config/profiles/qdrant-hybrid.yaml, added to stacks whose
+# profile has none (pgvector.yaml), so every model stack ranks — and gates on rerank.min_score — the same way.
+defaults:
+  retrieval:
+    rerank:
+      enabled: true
+      provider: fastembed
+      model: Xenova/ms-marco-MiniLM-L-6-v2
+      candidates: 30
+      options: {cache_dir: "${FASTEMBED_CACHE:-./data/models}"}

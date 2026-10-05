@@ -1,0 +1,62 @@
+# Production overlay: security, JSON logs, Postgres registry, Claude for generation.
+# RAG_CONFIG_FILE=config/rag.yaml,config/profiles/qdrant-hybrid.yaml,config/profiles/production.yaml
+# Secrets come from the environment / your secret manager — never commit them.
+
+app:
+  environment: prod
+  docs_enabled: ${RAG_DOCS_ENABLED:-false}
+
+server:
+  workers: ${WEB_CONCURRENCY:-2}
+
+logging:
+  level: INFO
+  format: json
+
+observability:
+  tracing_enabled: ${OTEL_ENABLED:-false}
+  otlp_endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
+
+security:
+  auth_enabled: true
+  api_keys:
+    # Prefer key_sha256 (echo -n "$KEY" | shasum -a 256) so plaintext keys never live in config.
+    - name: platform-admin
+      key_sha256: ${RAG_ADMIN_KEY_SHA256}
+      scopes: [admin]
+    - name: ingestion-pipeline
+      key_sha256: ${RAG_INGEST_KEY_SHA256}
+      scopes: [ingest, query]
+    - name: chat-frontend
+      key_sha256: ${RAG_QUERY_KEY_SHA256}
+      scopes: [query]
+      collections: [products, default]
+  cors_allow_origins: []
+  trusted_hosts: ["*"]
+  rate_limit: {enabled: true, requests_per_minute: 1200, burst: 200}
+
+registry:
+  url: ${REGISTRY_URL}                  # postgresql+psycopg://user:pass@host:5432/rag
+  auto_create_schema: false             # run `alembic upgrade head` in the release pipeline
+  pool_size: 10
+
+llm:
+  provider: anthropic
+  model: claude-opus-5
+  api_key: ${ANTHROPIC_API_KEY}
+  max_tokens: 16000
+  anthropic:
+    refusal_fallback: default           # server-side fallback if a request is declined
+
+# Query rewriting, multi-query, HyDE and contextual enrichment use `utility_llm`, which defaults to
+# `llm`. To use a different (e.g. smaller/faster) model for those tasks, uncomment and choose one:
+# utility_llm:
+#   provider: anthropic
+#   model: <model-id>
+#   api_key: ${ANTHROPIC_API_KEY}
+#   max_tokens: 1024
+
+ingestion:
+  callbacks:
+    enabled: false
+    allowed_hosts: []

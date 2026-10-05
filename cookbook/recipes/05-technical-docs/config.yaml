@@ -1,0 +1,31 @@
+# Recipe 05 · Developer documentation: headings, code blocks, error codes and config keys.
+# Lesson: cookbook/recipes/05-technical-docs/README.md
+collections:
+  devdocs:
+    description: Product documentation (Markdown) — guides, references, changelog
+    payload_indexes:
+      - {field: product}
+      - {field: version}
+      - {field: kind}                  # guide | reference | changelog
+    pipeline:
+      chunking:
+        strategy: markdown             # split at headings; fenced code blocks are never cut in half
+        chunk_size: 300
+        chunk_overlap: 40
+        markdown_header_levels: [1, 2, 3]
+      enrichment:
+        contextual_header:
+          template: "{title}\n{section}\n\n{text}"   # "Error codes > E1042 — upload checksum mismatch" is embedded with the chunk
+      retrieval:
+        mode: hybrid
+        top_k: 5
+        group_by: source_id
+        group_size: 2
+        context_expansion:
+          enabled: true                # pull in the section before/after (e.g. the code sample after the prose)
+          window: 1
+      generation:
+        system_prompt: |
+          You are a documentation assistant for developers. Answer ONLY from the context and cite it with [n].
+          Quote identifiers, error codes, settings and code exactly as written; include a short code sample when
+          the context has one. If the docs do not say, answer "The documentation does not cover this."

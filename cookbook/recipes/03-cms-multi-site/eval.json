@@ -1,0 +1,24 @@
+{
+  "k": 5,
+  "cases": [
+    {"query": "how do I reset my password", "filter": {"site": "northwind-bank", "locale": "en"}, "relevant": ["northwind-bank:page-101"]},
+    {"query": "forgot my password", "filter": {"site": "tailspin-travel"}, "relevant": ["tailspin-travel:page-404"]},
+    {"query": "reset another admin's password", "filter": {"site": "fabrikam-docs"}, "relevant": ["fabrikam-docs:doc-301"]},
+    {"query": "my card was stolen", "filter": {"site": "northwind-bank", "locale": "en"}, "relevant": ["northwind-bank:page-102"]},
+    {"query": "how much does a transfer in dollars cost", "filter": {"site": "northwind-bank", "locale": "en"}, "relevant": ["northwind-bank:page-103"]},
+    {"query": "what is the phone number", "filter": {"site": "northwind-bank", "locale": "en"}, "relevant": {"northwind-bank:page-104": 2, "northwind-bank:page-101": 1, "northwind-bank:page-102": 1}},
+    {"query": "can I use the app when travelling abroad", "filter": {"site": "northwind-bank"}, "relevant": ["northwind-bank:faq-1"]},
+    {"query": "429 too many requests", "filter": {"site": "fabrikam-docs"}, "relevant": ["fabrikam-docs:doc-302"]},
+    {"query": "get notified when an order ships", "filter": {"site": "fabrikam-docs"}, "relevant": ["fabrikam-docs:doc-303"]},
+    {"query": "cancel my flight", "filter": {"site": "tailspin-travel", "locale": "en"}, "relevant": ["tailspin-travel:page-401"]},
+    {"query": "how many suitcases can I bring", "filter": {"site": "tailspin-travel"}, "relevant": ["tailspin-travel:page-402"]},
+    {"query": "annuler une réservation", "filter": {"site": "tailspin-travel", "locale": "fr"}, "relevant": ["tailspin-travel:page-401-fr"]},
+    {"query": "what's new in version 4.2", "filter": {"site": "contoso-blog"}, "relevant": ["contoso-blog:post-202"]},
+    {"query": "advice for writing release notes", "filter": {"site": "contoso-blog"}, "relevant": {"contoso-blog:post-203": 2, "contoso-blog:post-202": 1}}
+  ],
+  "variants": {
+    "dense": {"mode": "dense", "rerank": {"enabled": false}},
+    "sparse": {"mode": "sparse", "rerank": {"enabled": false}},
+    "hybrid": {"mode": "hybrid", "rerank": {"enabled": false}}
+  }
+}

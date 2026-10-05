@@ -1,0 +1,78 @@
+{
+  "k": 3,
+  "cases": [
+    {
+      "query": "revent 80 cfm",
+      "relevant": {
+        "fan-revent-rg80": 2,
+        "fan-revent-rg110": 1
+      }
+    },
+    {
+      "query": "quiet bathroom exhaust fan",
+      "relevant": {
+        "fan-broan-quiet80": 2,
+        "fan-delta-vfb25ach": 2,
+        "fan-aeropure-ap80rvlw": 1,
+        "fan-panasonic-fv20vq3": 1
+      }
+    },
+    {
+      "query": "silent exhaust for small room",
+      "relevant": [
+        "fan-broan-quiet80",
+        "fan-delta-vfb25ach",
+        "fan-revent-rg80"
+      ]
+    },
+    {
+      "query": "fan that turns on automatically when the shower gets steamy",
+      "relevant": [
+        "fan-delta-vfb25ach",
+        "fan-aeropure-ap120h"
+      ]
+    },
+    {
+      "query": "bathroom fan with heater",
+      "relevant": [
+        "fan-delta-rad80"
+      ]
+    },
+    {
+      "query": "replace old fan without attic access",
+      "relevant": [
+        "fan-panasonic-fv0811vf5"
+      ]
+    },
+    {
+      "query": "tape for sealing duct joints",
+      "relevant": [
+        "duct-tape-foil"
+      ]
+    },
+    {
+      "query": "FV-20VQ3",
+      "relevant": [
+        "fan-panasonic-fv20vq3"
+      ]
+    }
+  ],
+  "variants": {
+    "dense": {
+      "mode": "dense"
+    },
+    "sparse": {
+      "mode": "sparse"
+    },
+    "hybrid": {
+      "mode": "hybrid"
+    },
+    "hybrid+rerank": {
+      "mode": "hybrid",
+      "rerank": {
+        "enabled": true
+      }
+    }
+  },
+  "include_cases": false
+}

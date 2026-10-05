@@ -1,0 +1,5 @@
+# Stack layer used by `--stack models`: keeps vectors in process memory, so the real-model stack
+# (BGE + SPLADE++ + cross-encoder, from config/profiles/qdrant-hybrid.yaml) runs with no database.
+# Layered after qdrant-hybrid.yaml, it only swaps the vector store; every model setting is kept.
+vector_store:
+  provider: memory

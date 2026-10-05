@@ -1,0 +1,9 @@
+# Overlay: Claude through the Anthropic API (extra `anthropic`) — the production choice for Claude.
+#   ANTHROPIC_API_KEY=... RAG_CONFIG_FILE=config/rag.yaml,<stack profile>,config/profiles/llm-anthropic.yaml make run
+llm:
+  provider: anthropic
+  model: claude-opus-5
+  api_key: ${ANTHROPIC_API_KEY}
+  max_tokens: 16000
+  anthropic:
+    refusal_fallback: default   # server-side fallback if a request is declined; "off" to disable

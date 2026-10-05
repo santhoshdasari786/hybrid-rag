@@ -1,0 +1,85 @@
+title: "02 · E-commerce — similar product names, variants, accessories and facets"
+summary: Amazon-style catalog where names differ by one word or one letter
+collection: shop
+steps:
+  - name: Ingest the catalog as a background job
+    ingest: {file: data/catalog.json, mode: async}
+
+  # --- near-identical names -------------------------------------------------------------
+  - name: "'X9 Pro Max' — lexical search alone ranks the phone's own case first (the accessory trap)"
+    when: {stacks: [offline]}
+    search: {query: nimbus x9 pro max}
+    expect: {first: vela-case-x9-pro-max-clear, includes: [nimbus-x9-pro-max-256-graphite], within: 3}
+
+  - name: "'X9 Pro Max' — with a cross-encoder the phone wins, and 'X9 Pro' stays below it"
+    when: {stacks: [models, qdrant, pgvector]}
+    search: {query: nimbus x9 pro max}
+    expect: {first: [nimbus-x9-pro-max-256-graphite, nimbus-x9-pro-max-1tb-blue]}
+
+  - name: "A department filter fixes the trap on every stack"
+    search: {query: nimbus x9 pro max, filter: {category: phone}}
+    expect: {every: {category: phone}, first: [nimbus-x9-pro-max-256-graphite, nimbus-x9-pro-max-1tb-blue]}
+
+  - name: Storage and colour pick the exact SKU
+    search: {query: Nimbus X9 Pro 512 GB Silver}
+    expect: {first: nimbus-x9-pro-512-silver}
+
+  - name: A one-letter model number difference (AF-80Q vs AF-80QH)
+    search: {query: AF-80QH}
+    expect: {first: airflo-af80qh}
+
+  - name: The model number typed without its dash
+    search: {query: af80qh}
+    expect: {first: airflo-af80qh}
+
+  # --- accessories mention the phone they fit --------------------------------------------
+  - name: "'case for …' finds the right case — Pro Max, not Pro"
+    search: {query: case for nimbus x9 pro max}
+    expect: {first: vela-case-x9-pro-max-clear}
+
+  # --- facets ----------------------------------------------------------------------------
+  - name: Facets — category, price ceiling and stock
+    search:
+      query: noise cancelling headphones
+      filter: {category: [headphones, earbuds], price: {lte: 250}, in_stock: true}
+    expect:
+      count: {min: 2}
+      every: {category: [headphones, earbuds], price: {lte: 250}, in_stock: true}
+
+  - name: Out-of-stock variants are filtered out
+    search: {query: kestrel qc700 headphones, filter: {in_stock: true}}
+    expect: {excludes: [kestrel-qc700-silver], includes: [kestrel-qc700-black]}
+
+  # --- variants ----------------------------------------------------------------------------
+  - name: Variants collapse — one result per product family
+    search: {query: nimbus x9, filter: {category: phone}, top_k: 8}
+    expect: {distinct: family, count: {min: 5}}
+
+  - name: The variant picker turns grouping off for one family
+    search: {query: nimbus x9 pro, filter: {family: nimbus-x9-pro}, retrieval: {group_by: ""}}
+    expect: {includes: [nimbus-x9-pro-256-graphite, nimbus-x9-pro-512-silver]}
+
+  # --- measure -----------------------------------------------------------------------------
+  - name: "Measure: exact names & model numbers (9 queries)"
+    evaluate: eval-exact.json
+    expect: {variant: "hybrid 1:1", ndcg_min: 0.85, not_worse_than: [dense]}
+
+  - name: "Measure: shopper language (11 queries)"
+    evaluate: eval-natural.json
+    expect: {variant: "hybrid 1:1", ndcg_min: 0.6, not_worse_than: [dense]}
+
+  - name: "Measure: what the cross-encoder adds on top of hybrid"
+    when: {stacks: [models, qdrant, pgvector]}
+    evaluate:
+      file: eval-natural.json
+      variants:
+        "hybrid": {mode: hybrid, group_by: "", rerank: {enabled: false}}
+        "hybrid + cross-encoder": {mode: hybrid, group_by: "", rerank: {enabled: true}}
+    expect: {variant: "hybrid + cross-encoder", ndcg_min: 0.6}
+
+  # --- answer --------------------------------------------------------------------------------
+  - name: Shopping assistant answers with citations
+    chat:
+      question: Which Nimbus X9 model has the biggest battery?
+      filter: {category: phone}
+    expect: {citations_min: 1}

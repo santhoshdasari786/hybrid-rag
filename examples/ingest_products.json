@@ -1,0 +1,197 @@
+{
+  "documents": [
+    {
+      "source_id": "fan-revent-rg80",
+      "title": "ReVent RG80 Bathroom Exhaust Fan 80 CFM",
+      "mime_type": "text/markdown",
+      "content": "# ReVent RG80 Bathroom Exhaust Fan 80 CFM\n\nThe ReVent RG80 is a ceiling mounted bathroom exhaust fan rated at 80 CFM and 0.8 sones. It uses a 4 inch duct connector and includes a backdraft damper. Suitable for bathrooms up to 75 square feet.",
+      "metadata": {
+        "brand": "ReVent",
+        "tags": [
+          "quiet",
+          "ceiling"
+        ],
+        "category": "bathroom-fan",
+        "cfm": 80,
+        "sones": 0.8
+      }
+    },
+    {
+      "source_id": "fan-revent-rg110",
+      "title": "ReVent RG110 Bathroom Exhaust Fan 110 CFM",
+      "mime_type": "text/markdown",
+      "content": "# ReVent RG110 Bathroom Exhaust Fan 110 CFM\n\nThe ReVent RG110 moves 110 CFM at 1.2 sones, sized for bathrooms up to 105 square feet. Galvanized steel housing with a 4 inch duct.",
+      "metadata": {
+        "brand": "ReVent",
+        "tags": [
+          "ceiling"
+        ],
+        "category": "bathroom-fan",
+        "cfm": 110,
+        "sones": 1.2
+      }
+    },
+    {
+      "source_id": "fan-panasonic-fv20vq3",
+      "title": "Panasonic FV-20VQ3 WhisperCeiling 190 CFM Ceiling Mounted Fan",
+      "mime_type": "text/markdown",
+      "content": "# Panasonic FV-20VQ3 WhisperCeiling 190 CFM Ceiling Mounted Fan\n\nWhisperCeiling fans feature a totally enclosed condenser motor and a double-tapered, dolphin-shaped blower wheel to quietly move air. Rated 190 CFM. A built-in damper prevents backdraft. Adjustable mounting brackets up to 26 inches simplify installation.",
+      "metadata": {
+        "brand": "Panasonic",
+        "tags": [
+          "quiet",
+          "ceiling",
+          "commercial"
+        ],
+        "category": "bathroom-fan",
+        "cfm": 190,
+        "sones": 1.0
+      }
+    },
+    {
+      "source_id": "fan-panasonic-fv0811vf5",
+      "title": "Panasonic FV-0811VF5 WhisperFit EZ Retrofit Ventilation Fan, 80 or 110 CFM",
+      "mime_type": "text/markdown",
+      "content": "# Panasonic FV-0811VF5 WhisperFit EZ Retrofit Ventilation Fan, 80 or 110 CFM\n\nWhisperFit EZ is a low profile retrofit fan with a pick-a-flow speed selector for 80 or 110 CFM. Designed to replace existing fans without attic access. ENERGY STAR rated.",
+      "metadata": {
+        "brand": "Panasonic",
+        "tags": [
+          "quiet",
+          "retrofit"
+        ],
+        "category": "bathroom-fan",
+        "cfm": 80,
+        "sones": 0.8
+      }
+    },
+    {
+      "source_id": "fan-delta-rad80",
+      "title": "Delta BreezRadiance RAD80 80 CFM Fan with Heater",
+      "mime_type": "text/markdown",
+      "content": "# Delta BreezRadiance RAD80 80 CFM Fan with Heater\n\nThe Delta BreezRadiance series 80 CFM bathroom fan includes a 1300 watt heater and a light. The DC brushless motor is energy efficient and runs continuously at low speed.",
+      "metadata": {
+        "brand": "Delta",
+        "tags": [
+          "heater",
+          "light"
+        ],
+        "category": "bathroom-fan",
+        "cfm": 80,
+        "sones": 1.5
+      }
+    },
+    {
+      "source_id": "fan-delta-vfb25ach",
+      "title": "Delta BreezSignature VFB25ACH 80 CFM Exhaust Bath Fan with Humidity Sensor",
+      "mime_type": "text/markdown",
+      "content": "# Delta BreezSignature VFB25ACH 80 CFM Exhaust Bath Fan with Humidity Sensor\n\nAn 80 CFM exhaust fan with a built-in humidity sensor that switches on automatically when moisture rises, helping to prevent mold. Less than 0.3 sones, ENERGY STAR qualified, DC brushless motor.",
+      "metadata": {
+        "brand": "Delta",
+        "tags": [
+          "quiet",
+          "humidity-sensor",
+          "energy-star"
+        ],
+        "category": "bathroom-fan",
+        "cfm": 80,
+        "sones": 0.3
+      }
+    },
+    {
+      "source_id": "fan-broan-quiet80",
+      "title": "Broan Very Quiet Ceiling Bathroom Exhaust Fan, ENERGY STAR Certified, 0.3 Sones, 80 CFM",
+      "mime_type": "text/markdown",
+      "content": "# Broan Very Quiet Ceiling Bathroom Exhaust Fan, ENERGY STAR Certified, 0.3 Sones, 80 CFM\n\nVery quiet ceiling bathroom exhaust fan, 0.3 sones at 80 CFM, covers bathrooms up to 75 square feet. Easy installation from below with a 4 inch or 6 inch duct.",
+      "metadata": {
+        "brand": "Broan-NuTone",
+        "tags": [
+          "quiet",
+          "energy-star"
+        ],
+        "category": "bathroom-fan",
+        "cfm": 80,
+        "sones": 0.3
+      }
+    },
+    {
+      "source_id": "fan-homewerks-7141-80",
+      "title": "Homewerks 7141-80 Bathroom Fan Integrated LED Light Ceiling Mount, 1.1 Sones, 80 CFM",
+      "mime_type": "text/markdown",
+      "content": "# Homewerks 7141-80 Bathroom Fan Integrated LED Light Ceiling Mount, 1.1 Sones, 80 CFM\n\nQuietly eliminates moisture and humidity. 1.1 sones at 80 CFM for spaces up to 80 square feet, with an integrated LED light fixture.",
+      "metadata": {
+        "brand": "Homewerks",
+        "tags": [
+          "light",
+          "led"
+        ],
+        "category": "bathroom-fan",
+        "cfm": 80,
+        "sones": 1.1
+      }
+    },
+    {
+      "source_id": "fan-aeropure-ap80rvlw",
+      "title": "Aero Pure AP80RVLW Super Quiet 80 CFM Recessed Fan/Light",
+      "mime_type": "text/markdown",
+      "content": "# Aero Pure AP80RVLW Super Quiet 80 CFM Recessed Fan/Light\n\nSuper quiet 80 CFM energy efficient fan that disappears into the ceiling leaving only a recessed light in view. May be installed over a shower when wired to a GFCI breaker.",
+      "metadata": {
+        "brand": "Aero Pure",
+        "tags": [
+          "quiet",
+          "light",
+          "shower"
+        ],
+        "category": "bathroom-fan",
+        "cfm": 80,
+        "sones": 0.8
+      }
+    },
+    {
+      "source_id": "fan-aeropure-ap120h",
+      "title": "Aero Pure AP120H-SL Slim Fit 120 CFM Bathroom Fan with LED Light and Humidity Sensor",
+      "mime_type": "text/markdown",
+      "content": "# Aero Pure AP120H-SL Slim Fit 120 CFM Bathroom Fan with LED Light and Humidity Sensor\n\nSlim fit 120 CFM fan with adjustable humidity sensor and dimmable LED light for larger bathrooms. Automatic moisture control reduces mold and mildew.",
+      "metadata": {
+        "brand": "Aero Pure",
+        "tags": [
+          "humidity-sensor",
+          "light",
+          "led"
+        ],
+        "category": "bathroom-fan",
+        "cfm": 120,
+        "sones": 1.0
+      }
+    },
+    {
+      "source_id": "duct-tape-foil",
+      "title": "HVAC Foil Duct Tape 2.5 inch x 60 yards",
+      "mime_type": "text/markdown",
+      "content": "# HVAC Foil Duct Tape 2.5 inch x 60 yards\n\nUL listed aluminum foil tape for sealing ductwork joints on exhaust fan installations. Resists moisture and temperature extremes.",
+      "metadata": {
+        "brand": "Nashua",
+        "tags": [
+          "accessory"
+        ],
+        "category": "accessory"
+      }
+    },
+    {
+      "source_id": "blender-ninja",
+      "title": "Ninja Professional Countertop Blender 1000 Watt",
+      "mime_type": "text/markdown",
+      "content": "# Ninja Professional Countertop Blender 1000 Watt\n\nProfessional countertop blender with a 1000 watt motor for smoothies, frozen drinks and crushing ice. 72 oz pitcher.",
+      "metadata": {
+        "brand": "Ninja",
+        "tags": [
+          "kitchen"
+        ],
+        "category": "kitchen",
+        "discontinued": true
+      }
+    }
+  ],
+  "options": {
+    "mode": "sync"
+  }
+}

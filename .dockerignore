@@ -1,0 +1,15 @@
+.git
+.venv
+**/__pycache__
+.pytest_cache
+.mypy_cache
+.ruff_cache
+data
+*.db
+.env
+tests
+doc
+*.pdf
+video_summary_hybrid_search.md
+.github
+.claude

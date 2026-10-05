@@ -1,0 +1,37 @@
+# Recipe 02 · E-commerce search with near-identical product names (Amazon-style catalog).
+# Lesson: cookbook/recipes/02-ecommerce-similar-products/README.md
+collections:
+  shop:
+    description: Product catalog — one document (and one chunk) per SKU
+    payload_indexes:              # every facet the storefront filters on
+      - {field: brand}
+      - {field: category}
+      - {field: family}
+      - {field: price, type: float}
+      - {field: rating, type: float}
+      - {field: in_stock, type: bool}
+    pipeline:
+      chunking:
+        strategy: markdown        # a product page is small: one chunk per SKU keeps title + specs together
+        chunk_size: 256
+        chunk_overlap: 0
+      enrichment:
+        contextual_header:
+          template: "{title}\n\n{text}"   # the product name is embedded twice → it dominates the vector
+      retrieval:
+        mode: hybrid
+        top_k: 6
+        candidate_k: 60
+        fusion:
+          method: rrf
+          k: 60
+          weights: {dense: 1.0, sparse: 1.0}   # measured: 1:1 beat sparse×1.5 here (see README) — measure yours
+        group_by: family          # one hit per product family; colours/storage variants collapse
+        group_size: 1
+        rerank:
+          candidates: 40          # used when the stack enables a cross-encoder (stack `models`/`qdrant`)
+      generation:
+        system_prompt: |
+          You are a shopping assistant for an online store. Answer ONLY from the product information in the
+          context and cite every fact with its [n] marker. Name the exact model, storage and colour you mean,
+          and never mix up similarly named products (for example "X9 Pro" and "X9 Pro Max").

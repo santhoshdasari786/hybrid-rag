@@ -1,0 +1,7 @@
+# Overlay: OpenAI or any OpenAI-compatible server (extra `openai`): vLLM, Ollama, LM Studio, Azure, LiteLLM…
+#   OPENAI_API_KEY=... OPENAI_MODEL=<chat model> RAG_CONFIG_FILE=config/rag.yaml,<stack profile>,config/profiles/llm-openai.yaml make run
+llm:
+  provider: openai
+  model: ${OPENAI_MODEL}
+  api_key: ${OPENAI_API_KEY}
+  # base_url: http://localhost:11434/v1    # Ollama / vLLM / LM Studio (then OPENAI_API_KEY can be any string)

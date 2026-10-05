@@ -1,0 +1,99 @@
+{
+ "k": 5,
+ "cases": [
+  {
+   "query": "nimbus x9 pro max",
+   "relevant": {
+    "nimbus-x9-pro-max-256-graphite": 2,
+    "nimbus-x9-pro-max-1tb-blue": 2
+   }
+  },
+  {
+   "query": "nimbus x9 pro max 1tb",
+   "relevant": {
+    "nimbus-x9-pro-max-1tb-blue": 2,
+    "nimbus-x9-pro-max-256-graphite": 1
+   }
+  },
+  {
+   "query": "Nimbus X9 Pro 512 GB Silver",
+   "relevant": {
+    "nimbus-x9-pro-512-silver": 2,
+    "nimbus-x9-pro-256-graphite": 1
+   }
+  },
+  {
+   "query": "AF-80QH",
+   "relevant": [
+    "airflo-af80qh"
+   ]
+  },
+  {
+   "query": "af80ql",
+   "relevant": [
+    "airflo-af80ql"
+   ]
+  },
+  {
+   "query": "kestrel qc700i",
+   "relevant": {
+    "kestrel-qc700i-black": 2
+   }
+  },
+  {
+   "query": "QC700 silver",
+   "relevant": {
+    "kestrel-qc700-silver": 2,
+    "kestrel-qc700-black": 1
+   }
+  },
+  {
+   "query": "case for nimbus x9 pro",
+   "relevant": {
+    "vela-case-x9-pro-clear": 2
+   }
+  },
+  {
+   "query": "x9 pro max cover",
+   "relevant": {
+    "vela-case-x9-pro-max-clear": 2
+   }
+  }
+ ],
+ "variants": {
+  "dense": {
+   "mode": "dense",
+   "group_by": "",
+   "rerank": {
+    "enabled": false
+   }
+  },
+  "sparse": {
+   "mode": "sparse",
+   "group_by": "",
+   "rerank": {
+    "enabled": false
+   }
+  },
+  "hybrid 1:1": {
+   "mode": "hybrid",
+   "group_by": "",
+   "rerank": {
+    "enabled": false
+   }
+  },
+  "hybrid sparse\u00d71.5": {
+   "mode": "hybrid",
+   "group_by": "",
+   "rerank": {
+    "enabled": false
+   },
+   "fusion": {
+    "weights": {
+     "dense": 1.0,
+     "sparse": 1.5
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,86 @@
+title: "03 · CMS with many sites — one shared collection, scoped by site"
+summary: Four sites, three of them with a 'reset password' page — tenancy, locales, publishing workflow
+collection: cms
+steps:
+  # --- publishing: each site syncs its pages (a backfill would use async jobs) -----------------
+  - name: "Sync site: northwind-bank (HTML pages, en + de)"
+    ingest: data/northwind-bank.json
+  - name: "Sync site: contoso-blog (Markdown articles)"
+    ingest: data/contoso-blog.json
+  - name: "Sync site: fabrikam-docs (Markdown docs)"
+    ingest: data/fabrikam-docs.json
+  - name: "Sync site: tailspin-travel as a background job (en + fr)"
+    ingest: {file: data/tailspin-travel.json, mode: async}
+
+  # --- tenancy -------------------------------------------------------------------------------------
+  - name: Without a site filter, every site's password page competes
+    search: {query: how do I reset my password}
+    expect: {distinct_min: {site: 3}}
+
+  - name: The site filter keeps a visitor inside their site
+    search: {query: how do I reset my password, filter: {site: northwind-bank, locale: en}}
+    expect: {every: {site: northwind-bank, locale: en}, includes: ["northwind-bank:page-101"], within: 2}
+
+  - name: Same site, German visitor
+    search: {query: Passwort vergessen, filter: {site: northwind-bank, locale: de}}
+    expect: {every: {locale: de}, first: "northwind-bank:page-101-de"}
+
+  - name: "Facet: FAQ entries only"
+    search: {query: can I use online banking abroad, filter: {site: northwind-bank, content_type: faq}}
+    expect: {every: {content_type: faq}, first_text_contains: abroad}
+
+  - name: "Freshness: a datetime range on published_at (e.g. a 'recent articles' widget)"
+    search:
+      query: password reset release notes changelog
+      filter: {published_at: {gte: "2026-06-01T00:00:00Z"}}
+    expect: {every: {published_at: {gte: "2026-06-01T00:00:00Z"}}, count: {min: 2}}
+
+  # --- result shape --------------------------------------------------------------------------------
+  - name: At most two chunks per page (group_by source_id, group_size 2)
+    search: {query: fees charges card account transfer, filter: {site: northwind-bank}, top_k: 6}
+    expect: {max_per: {source_id: 2}}
+
+  - name: Each hit carries its neighbouring chunks for the LLM
+    search: {query: international transfer fee, filter: {site: northwind-bank}}
+    expect: {includes: ["northwind-bank:page-103"], within: 2, has_context: true}
+
+  - name: "Measure: site-scoped retrieval on 14 labelled queries"
+    evaluate: eval.json
+    expect: {variant: hybrid, ndcg_min: 0.8}
+
+  # --- editorial workflow ---------------------------------------------------------------------
+  - name: An editor changes one section of a long page — only that section is re-embedded
+    upsert: {source_id: "northwind-bank:page-103", file: data/northwind-fees-v2.json}
+    expect: {action: updated, chunks_unchanged_min: 2, chunks_added_max: 2}
+
+  - name: The new fee is what search returns now
+    search: {query: international transfer fee, filter: {site: northwind-bank}}
+    expect: {includes: ["northwind-bank:page-103"], within: 2, any_text_contains: flat 7 EUR}
+
+  - name: Moving a page to another area is a metadata change — no re-embedding
+    patch_metadata: {source_id: "northwind-bank:page-103", metadata: {area: pricing}}
+
+  - name: The area facet sees the move immediately
+    search: {query: fees, filter: {site: northwind-bank, area: pricing}}
+    expect: {first: "northwind-bank:page-103", every: {area: pricing}}
+
+  - name: Unpublish one article
+    delete: ["contoso-blog:post-202"]
+
+  - name: The unpublished article is gone
+    search: {query: release notes 4.2 dark mode, filter: {site: contoso-blog}}
+    expect: {excludes: ["contoso-blog:post-202"]}
+
+  - name: Remove a whole site (the CMS knows its page IDs)
+    delete: {file: data/tailspin-travel.json}
+
+  - name: Nothing from the removed site is returned
+    search: {query: baggage allowance cancel booking password}
+    expect: {every: {site: {ne: tailspin-travel}}}
+
+  # --- answering -----------------------------------------------------------------------------------
+  - name: A site's chat answers only from that site
+    chat:
+      question: How do I reset my password?
+      filter: {site: fabrikam-docs}
+    expect: {citations_min: 1, cited_every: {site: fabrikam-docs}}

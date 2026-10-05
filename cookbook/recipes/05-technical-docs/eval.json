@@ -1,0 +1,22 @@
+{
+  "k": 5,
+  "cases": [
+    {"query": "E1042", "relevant": ["quasar-errors"]},
+    {"query": "error E2003", "relevant": ["quasar-errors"]},
+    {"query": "QUASAR_TIMEOUT_MS", "relevant": {"quasar-config": 2, "quasar-changelog": 1}},
+    {"query": "max_retries default", "relevant": {"quasar-config": 2, "quasar-uploads": 1}},
+    {"query": "client.resume", "relevant": ["quasar-uploads"]},
+    {"query": "my upload got interrupted halfway, how do I continue it", "relevant": ["quasar-uploads"]},
+    {"query": "install behind a company firewall", "relevant": ["quasar-install"]},
+    {"query": "which python versions are supported", "relevant": {"quasar-install": 2, "quasar-changelog": 1}},
+    {"query": "keep my data in europe", "relevant": ["quasar-config"]},
+    {"query": "what replaced client.put", "relevant": ["quasar-changelog"]},
+    {"query": "the request takes too long and gives up", "relevant": {"quasar-config": 2}},
+    {"query": "I ran out of monthly upload allowance", "relevant": ["quasar-errors"]}
+  ],
+  "variants": {
+    "dense": {"mode": "dense", "group_by": "", "rerank": {"enabled": false}},
+    "sparse": {"mode": "sparse", "group_by": "", "rerank": {"enabled": false}},
+    "hybrid": {"mode": "hybrid", "group_by": "", "rerank": {"enabled": false}}
+  }
+}

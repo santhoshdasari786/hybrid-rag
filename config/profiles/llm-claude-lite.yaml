@@ -1,0 +1,20 @@
+# Overlay: generate answers with Claude through the local Claude Code CLI and YOUR OWN subscription
+# (claude-lite-llm) — no API key, no per-token billing; calls count against your plan's usage limits.
+#
+# Personal / development use only. Anthropic's terms reserve subscription credentials for the
+# subscriber's own use: do not serve other people's requests with this profile. Shared and
+# production deployments use `provider: anthropic` with an API key (doc/adr/0006).
+#
+#   make install                             # all extras (or: uv sync --inexact --extra claude-lite); plus Claude Code: https://code.claude.com
+#   claude login                             # or export CLAUDE_CODE_OAUTH_TOKEN from `claude setup-token`
+#   RAG_CONFIG_FILE=config/rag.yaml,config/profiles/llm-claude-lite.yaml make run
+#
+# Layer it on any store profile, e.g. config/rag.yaml,config/profiles/qdrant-hybrid.yaml,<this file>.
+llm:
+  provider: claude_lite_llm
+  model: opus              # CLI alias or full model ID; "" uses the CLI's default for your plan
+  timeout_s: 180           # each call starts a CLI process (a few seconds of overhead)
+  claude_lite:
+    max_concurrency: 2     # CLI processes at once; plan limits apply across all of them
+    # cli_path: /usr/local/bin/claude
+    # extra_args: ["--effort", "low"]

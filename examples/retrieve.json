@@ -1,0 +1,8 @@
+{
+  "query": "revent 80 cfm",
+  "top_k": 5,
+  "filter": {
+    "category": "bathroom-fan"
+  },
+  "include_debug": true
+}

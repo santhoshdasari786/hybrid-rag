@@ -1,0 +1,114 @@
+{
+ "k": 5,
+ "cases": [
+  {
+   "query": "protect my x9 pro screen from scratches",
+   "relevant": [
+    "vela-glass-x9-x9pro"
+   ]
+  },
+  {
+   "query": "plug to quickly charge an orbit s5 ultra",
+   "relevant": [
+    "vela-charger-45w"
+   ]
+  },
+  {
+   "query": "stop the mirror fogging up after a shower",
+   "relevant": {
+    "airflo-af80qh": 2
+   }
+  },
+  {
+   "query": "exhaust fan for a large bathroom",
+   "relevant": {
+    "airflo-af110q": 2
+   }
+  },
+  {
+   "query": "cheapest bathroom fan",
+   "relevant": {
+    "breezer-b80": 2
+   }
+  },
+  {
+   "query": "budget nimbus phone",
+   "relevant": {
+    "nimbus-x9-lite-128-white": 2
+   }
+  },
+  {
+   "query": "phone that can zoom far for bird photos",
+   "relevant": {
+    "orbit-s5-ultra-512-titanium": 2,
+    "nimbus-x9-pro-max-256-graphite": 2,
+    "nimbus-x9-pro-max-1tb-blue": 2
+   }
+  },
+  {
+   "query": "phone I can write notes on with a pen",
+   "relevant": [
+    "orbit-s5-ultra-512-titanium"
+   ]
+  },
+  {
+   "query": "earphones for jogging",
+   "relevant": {
+    "kestrel-sport-open": 2,
+    "kestrel-qc70-earbuds": 1
+   }
+  },
+  {
+   "query": "headset to block airplane engine noise",
+   "relevant": {
+    "kestrel-qc700-black": 2,
+    "kestrel-qc700i-black": 2,
+    "kestrel-qc700-silver": 2,
+    "orbit-sound-one": 1,
+    "kestrel-qc70-earbuds": 1
+   }
+  },
+  {
+   "query": "last year's nimbus pro flagship",
+   "relevant": [
+    "nimbus-x8-pro-256-black"
+   ]
+  }
+ ],
+ "variants": {
+  "dense": {
+   "mode": "dense",
+   "group_by": "",
+   "rerank": {
+    "enabled": false
+   }
+  },
+  "sparse": {
+   "mode": "sparse",
+   "group_by": "",
+   "rerank": {
+    "enabled": false
+   }
+  },
+  "hybrid 1:1": {
+   "mode": "hybrid",
+   "group_by": "",
+   "rerank": {
+    "enabled": false
+   }
+  },
+  "hybrid sparse\u00d71.5": {
+   "mode": "hybrid",
+   "group_by": "",
+   "rerank": {
+    "enabled": false
+   },
+   "fusion": {
+    "weights": {
+     "dense": 1.0,
+     "sparse": 1.5
+    }
+   }
+  }
+ }
+}

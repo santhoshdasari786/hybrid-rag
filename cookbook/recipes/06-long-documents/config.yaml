@@ -1,0 +1,34 @@
+# Recipe 06 · Long documents (handbooks, policies, reports, PDF text): the same document indexed with
+# three chunkers, so you can measure which one keeps answers retrievable.
+# Lesson: cookbook/recipes/06-long-documents/README.md
+#
+# YAML anchors (&name / <<: *name) share settings between collections inside one file.
+x-handbook-retrieval: &handbook_retrieval
+  mode: hybrid
+  top_k: 4
+  context_expansion:
+    enabled: true            # small chunks for precise matching, neighbours for the LLM ("small-to-big")
+    window: 1
+
+collections:
+  handbook_fixed:
+    description: "Baseline: fixed windows that ignore sentences and sections"
+    pipeline:
+      chunking: {strategy: fixed, chunk_size: 100, chunk_overlap: 0}
+      retrieval: {<<: *handbook_retrieval}
+
+  handbook_recursive:
+    description: Recursive splitting on paragraphs, then sentences, with overlap
+    pipeline:
+      chunking: {strategy: recursive, chunk_size: 100, chunk_overlap: 20}
+      retrieval: {<<: *handbook_retrieval}
+
+  handbook_semantic:
+    description: Semantic splitting where the topic changes between sentences
+    pipeline:
+      chunking:
+        strategy: semantic
+        chunk_size: 160      # upper bound; boundaries come from embedding distance between sentences
+        chunk_overlap: 0
+        semantic: {breakpoint_percentile: 85, buffer_size: 1}
+      retrieval: {<<: *handbook_retrieval}

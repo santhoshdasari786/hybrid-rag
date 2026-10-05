@@ -1,0 +1,37 @@
+# Production-grade retrieval: Qdrant + BGE dense + SPLADE++ learned sparse + cross-encoder rerank.
+# RAG_CONFIG_FILE=config/rag.yaml,config/profiles/qdrant-hybrid.yaml   (extra: qdrant, fastembed)
+
+vector_store:
+  provider: qdrant
+  qdrant:
+    url: ${QDRANT_URL:-http://localhost:6333}
+    api_key: ${QDRANT_API_KEY:-}
+    collection_prefix: rag_
+    hnsw: {m: 16, ef_construct: 128}
+    quantization: none                # scalar → ~4x less RAM with minimal recall loss
+
+defaults:
+  chunking:
+    chunk_size: 384                   # BGE's window is 512 tokens; keep headroom for the header
+    chunk_overlap: 48
+  embedding:
+    dense:
+      provider: fastembed
+      model: BAAI/bge-small-en-v1.5   # 384-d, fast on CPU. bge-large-en-v1.5 (1024-d) for max quality
+      query_prefix: "Represent this sentence for searching relevant passages: "
+      batch_size: 32
+      options: {cache_dir: "${FASTEMBED_CACHE:-./data/models}"}
+    sparse:
+      provider: fastembed
+      model: prithivida/Splade_PP_en_v1   # learned term weighting + expansion (no IDF needed)
+      options: {cache_dir: "${FASTEMBED_CACHE:-./data/models}"}
+  retrieval:
+    mode: hybrid
+    candidate_k: 50
+    fusion: {method: rrf, k: 60, execution: client}   # execution: native → Qdrant prefetch + RRF
+    rerank:
+      enabled: true
+      provider: fastembed
+      model: Xenova/ms-marco-MiniLM-L-6-v2
+      candidates: 30
+      options: {cache_dir: "${FASTEMBED_CACHE:-./data/models}"}

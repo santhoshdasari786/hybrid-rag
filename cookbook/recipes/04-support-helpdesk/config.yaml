@@ -1,0 +1,29 @@
+# Recipe 04 · Support helpdesk: Q&A pairs as chunks with their own metadata, a troubleshooting guide,
+# conversational answers and a safe fallback. Lesson: cookbook/recipes/04-support-helpdesk/README.md
+collections:
+  helpdesk:
+    description: Help-centre FAQ (pre-chunked, one Q&A per chunk) and troubleshooting guides
+    payload_indexes:
+      - {field: area}                  # billing | account | technical (document metadata)
+      - {field: intent}                # one per Q&A pair (chunk metadata)
+      - {field: deprecated, type: bool}
+    pipeline:
+      chunking:                        # used for guides only; pre-chunked FAQ documents bypass the chunker
+        strategy: sentence
+        chunk_size: 90
+        chunk_overlap: 15
+      retrieval:
+        mode: hybrid
+        top_k: 4
+        context_expansion: {enabled: true, window: 1}
+        rerank:
+          min_score: 0.0               # relevance gate when the stack has a cross-encoder: on-topic questions scored
+                                       # +3…+8, off-topic ones ≈ −11 (MiniLM). Nothing above the gate → fallback answer.
+      generation:
+        condense_history: true         # "can I take it with me?" → "can I take my fibre service when moving house"
+        history_turns: 6
+        no_context_answer: "I couldn't find that in the Lumen Fibre help centre. You can chat with a person from 8:00 to 22:00."
+        system_prompt: |
+          You are the Lumen Fibre help-centre assistant. Answer ONLY from the context, in two to four short
+          sentences, and cite every fact with its [n] marker. If the context does not cover the question, say
+          that you don't know and suggest contacting support. Never promise refunds or dates the context does not state.
